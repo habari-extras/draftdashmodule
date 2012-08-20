@@ -5,11 +5,11 @@
 	
 	<author url="http://habariproject.org/">The Habari Community</author>
 	
-	<version>1.0</version>
+	<version>2.0</version>
 	<url>http://habariproject.org/</url>
 	<description><![CDATA[Provides a dashboard modules showing drafts.]]></description>
 
-	<copyright>2010</copyright>
+	<copyright>2012</copyright>
 	<guid>3fbab8b5-ef6d-486e-a82c-a8ec53cf51f3</guid>
 
 	<help>
