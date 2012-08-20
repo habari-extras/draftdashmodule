@@ -5,57 +5,46 @@ class DraftDashModule extends Plugin
 	private $theme;
 
 	/**
-	 * action_plugin_activation
-	 * Registers the core modules with the Modules class. Add these modules to the
-	 * dashboard if the dashboard is currently empty.
-	 * @param string $file plugin file
+	 * Add the block template to the theme
 	 */
-	function action_plugin_activation( $file )
+	function action_init()
 	{
-		if( Plugins::id_from_file($file) == Plugins::id_from_file(__FILE__) ) {
-			Modules::add( 'Latest Drafts' );
-		}
+		$this->add_template( 'dashboard.block.draft_posts', __DIR__ . '/dashboard.block.draft_posts.php' );
 	}
 
 	/**
-	 * action_plugin_deactivation
-	 * Unregisters the core modules.
-	 * @param string $file plugin file
+	 * Add the blocks this plugin provides to the list of available blocks
+	 * @param array $block_list An array of block names, indexed by unique string identifiers
+	 * @return array The altered array
 	 */
-	function action_plugin_deactivation( $file )
+	public function filter_block_list($block_list)
 	{
-		if( Plugins::id_from_file( $file ) == Plugins::id_from_file( __FILE__ ) ) {
-			Modules::remove_by_name( 'Latest Drafts' );
-		}
-	}
-
-	/**
-	 * filter_dash_modules
-	 * Registers the core modules with the Modules class. 
-	 */
-	function filter_dash_modules( $modules )
-	{
-		// Should we check a token here? Lest people see drafts they can't edit?
-		$modules[] = 'Latest Drafts';
-		
-		$this->add_template( 'dash_latestdrafts', dirname( __FILE__ ) . '/dash_latestdrafts.php' );
-
-		return $modules;
+		$block_list['draft_posts'] = _t( 'Latest Drafts');
+		return $block_list;
 	}
 	
 	/**
-	 * filter_dash_module_latest_entries
-	 * Gets the latest entries module
-	 * @param string $module_id
-	 * @return string The contents of the module
+	 * Return a list of blocks that can be used for the dashboard
+	 * @param array $block_list An array of block names, indexed by unique string identifiers
+	 * @return array The altered array
 	 */
-	public function filter_dash_module_latest_drafts( $module, $module_id, $theme )
+	public function filter_dashboard_block_list($block_list)
 	{
-		$theme->recent_posts = Posts::get( array( 'status' => 'draft', 'limit' => 8, 'type' => Post::type( 'entry' ), 'user_id' => User::identify()->id ) );
-		
-		$module[ 'title' ] = ( User::identify()->can( 'manage_entries' ) ? '<a href="' . Utils::htmlspecialchars( URL::get( 'admin', array( 'page' => 'posts', 'type' => Post::type( 'entry' ), 'status' => Post::status( 'draft' ), 'user_id' => User::identify()->id ) ) ) . '">' . _t( 'Latest Drafts', 'draftdashmodule' ) . '</a>' : _t( 'Latest Drafts', 'draftdashmodule' ) );
-		$module[ 'content' ] = $theme->fetch( 'dash_latestdrafts' );
-		return $module;
+		return $this->filter_block_list($block_list);
+	}
+	
+	/**
+	 * Produce the content for the latest drafts block
+	 * @param Block $block The block object
+	 * @param Theme $theme The theme that the block will be output with
+	 */
+	public function action_block_content_draft_posts($block, $theme)
+	{
+		$block->recent_posts = Posts::get(array('status' => 'draft', 'limit' => 8, 'user_id' => User::identify()->id));
+		if(User::identify()->can('manage_entries'))
+		{
+			$block->link = URL::get('admin', array('page' => 'posts', 'status' => Post::status('draft'), 'user_id' => User::identify()->id));
+		}
 	}
 
 	/**
