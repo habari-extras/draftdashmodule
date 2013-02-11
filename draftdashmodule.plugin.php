@@ -1,5 +1,7 @@
 <?php
 
+	namespace Habari;
+
 class DraftDashModule extends Plugin
 {
 	private $theme;
