@@ -1,4 +1,10 @@
-<?php if ( !defined( 'HABARI_PATH' ) ) { die( 'No direct access' ); } ?>
+<?php
+
+	namespace Habari;
+
+	if ( !defined( 'HABARI_PATH' ) ) { die( 'No direct access' ); }
+
+?>
 	<ul class="items">
 
 		<?php foreach((array)$content->recent_posts as $post): ?>
