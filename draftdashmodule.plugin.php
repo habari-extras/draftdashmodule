@@ -42,7 +42,7 @@ class DraftDashModule extends Plugin
 	 */
 	public function action_block_content_draft_posts($block, $theme)
 	{
-		$block->recent_posts = Posts::get(array('status' => 'draft', 'limit' => 8, 'user_id' => User::identify()->id));
+		$block->recent_posts = Posts::get(array('status' => 'draft', 'limit' => 8, 'user_id' => User::identify()->id, 'orderby' => 'pubdate DESC'));
 		if(User::identify()->can('manage_entries'))
 		{
 			$block->link = URL::get('admin', array('page' => 'posts', 'status' => Post::status('draft'), 'user_id' => User::identify()->id));
